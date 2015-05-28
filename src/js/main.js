@@ -6,6 +6,8 @@ var status;
 var cash = 100;
 var bet = 0;
 var replace = [];
+var you = new Player();
+var opponent= new Player();
 
 //buttons
 var $newGame = $(".new-game");
@@ -30,6 +32,7 @@ $newGame.click(function(){
   newDecks(1);
   $dealButton.removeAttr("disabled");
   status = "";
+  replace.length = 0;
 });
 
 $dealButton.click(function(){
@@ -59,6 +62,24 @@ $check.click(function(){
   dealCommunity();
 })
 
+
+//==========================================under the hood=================================
+
+//player constructor
+function Player(){
+  this.hand = [];
+  this.royalFlush = false;
+  this.straightFlush = false;
+  this.fourOfAKind = false;
+  this.fullHouse = false;
+  this.flush = false;
+  this.straight = false;
+  this.threeOfAKind = false;
+  this.twoPair = false;
+  this.onePair = false;
+  this.highCard = true;
+}
+
 // get new decks
 function newDecks(deck_count){
    var link = API_URL + deck_count;
@@ -80,12 +101,14 @@ function drawCards(card_count, target, callback){
 
 //append cards to page face up for player face down for opponent
 function appendCards(data, target){
-  data.cards.forEach(function(card){
-    var card = card.image==="http://deckofcardsapi.com/static/img/AD.png" ? "../img/aceDiamond.png" : card.image;
+  data.cards.forEach(function(cardData){
+    var card = cardData.image==="http://deckofcardsapi.com/static/img/AD.png" ? "../img/aceDiamond.png" : cardData.image;
     if(target===$opponent){
       replace.push(card);
+      opponent.hand.push(cardData.code);
       target.append("<img src="+ back +"></img>");
     }else{
+      you.hand.push(cardData.code);
       target.append("<img src="+ card +"></img>");
     }
   });
