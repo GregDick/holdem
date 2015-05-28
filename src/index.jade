@@ -7,17 +7,21 @@ block content
       button.new-game.btn.btn-block New Game
       button.deal.btn.btn-block(disabled="disabled") Deal
     .col-md-10.col-md-offset-1.community-cards
-    .col-md-8.col-md-offset-2.hole-cards
+    .row.players
+      .col-md-4.col-md-offset-2.hole-cards
+        p PLAYER
+      .col-md-4.pull-right.opponent
+        p OPPONENT
     .row
-      .col-md-4
+      .col-md-12.bet-space
         button.fold.btn.btn-md Fold
-      .col-md-8.bet-space
-        h4 CASH MONEY
+        h4#first CASH MONEY
         h4.cash-space
         h4 CURRENT BET
         h4.current-bet-space
-        input.bet-input(type="text" placeholder="$ Bet Ammount")
+        form
+          input.bet-input(type="text" placeholder="$ Bet Ammount")
+          button.bet.btn.btn-md(type="submit") Bet
         button.check.btn.btn-md Check
-        button.bet.btn.btn-md Bet
         button.call.btn.btn-md Call
         button.raise.btn.btn-md Raise

@@ -30,7 +30,12 @@ h1{
   }
 }
 
-.hole-cards{
+.players{
+  color: white;
+  font-size: 2em;
+}
+
+.hole-cards, .opponent{
   img{
   float: left;
   margin: 20px -30px;
@@ -40,10 +45,23 @@ h1{
   }
 }
 
-.bet-space h4{
-  display: inline;
-  text-align: center;
-  color: white;
-  opacity: 0.5;
-  margin: 10px;
+
+.bet-space {
+  h4 {
+    display: inline;
+    text-align: center;
+    color: white;
+    opacity: 0.5;
+    margin: 10px;
+  }
+  #first {
+    margin-left: 200px;
+  }
 }
+
+form{
+  display: inline-block;
+}
+
+
+
