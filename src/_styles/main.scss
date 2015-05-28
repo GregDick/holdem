@@ -1,0 +1,17 @@
+$leather: #422A0F;
+
+body{
+  background: $leather;
+}
+.container{
+  background-image: url(../img/blackjack-background.jpg);
+  min-height: 750px;
+}
+h1{
+  text-align: center;
+  margin: 100px auto 20px;
+  background: black;
+  color: white;
+  border: gold 5px dashed;
+  border-radius: 5px;
+}
