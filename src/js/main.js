@@ -94,10 +94,10 @@ function drawCards(card_count, target, callback){
   var address = DRAW_URL + deck_id + "/?count=" + card_count;
   getJSON(address, function(data){
     appendCards(data, target);
-  });
-  if(callback){
+    if(callback){
       callback();
     }
+  });
 }
 
 //append cards to page face up for player face down for opponent and adds card code to player.hand
@@ -130,11 +130,9 @@ function dealCommunity(){
     status = "river";
     break;
     case "river":
-    drawCards(1, $community);
+    drawCards(1, $community, makeBothHands);
     status = "finished";
     revealOpponent();
-    makeHand(you);
-    makeHand(opponent);
     break;
   }
 }
@@ -153,9 +151,55 @@ function addBetToPage(){
   $(".current-bet-space").text("$"+bet);
 }
 
+//calls make hand for you and opponent
+function makeBothHands(){
+  makeHand(you);
+  makeHand(opponent);
+}
+
 //checks for hand combinations
 function makeHand(player){
+  player.hand.forEach(function(card, index){
+    var suit = card.slice(1);
+    switch(card[0]){
+    case "0":
+    player.hand.splice(index, 1, "10" + suit);
+    break;
+    case "J":
+    player.hand.splice(index, 1, "11" + suit);
+    break;
+    case "Q":
+    player.hand.splice(index, 1, "12" + suit);
+    break;
+    case "K":
+    player.hand.splice(index, 1, "13" + suit);
+    break;
+    case "A":
+    player.hand.splice(index, 1, "14" + suit);
+    break;
+    }
+  })
   highCard(player);
+  console.log("Hand "+player.hand);
+  console.log("High card: "+player.highCard);
+  onePair(player);
+}
+
+//checks for one pair
+function onePair(player){
+  var firstValue;
+  var firstSuit;
+  var secondValue;
+  player.hand.forEach(function(card, index){
+    firstValue = card.slice(0, (card.length-1));
+    firstSuit = card.slice((card.length-1), (card.length));
+    player.hand.forEach(function(card, place){
+      secondValue = card.slice(0, (card.length-1));
+      if(firstValue===secondValue && index!==place){
+        console.log("Pair: " +card+" "+firstValue+firstSuit);
+      }
+    })
+  })
 }
 
 //checks for high card
@@ -164,24 +208,7 @@ function highCard(player){
   var suit = "";
   var value = "";
   player.hand.forEach(function(card){
-    switch(card[0]){
-    case "0":
-    card = "10" + card.slice(1);
-    break;
-    case "J":
-    card = "11" + card.slice(1);
-    break;
-    case "Q":
-    card = "12" + card.slice(1);
-    break;
-    case "K":
-    card = "13" + card.slice(1);
-    break;
-    case "A":
-    card = "14" + card.slice(1);
-    break;
-  }
-  value = card.slice(0, (card.length-1))
+    value = card.slice(0, (card.length-1));
     if(parseInt(value) > max){
       max = parseInt(value);
       suit = card.slice((card.length-1), (card.length));
