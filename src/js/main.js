@@ -36,6 +36,7 @@ $newGame.click(function(){
 });
 
 $dealButton.click(function(){
+  $(".players p").removeClass("hidden");
   drawCards(2, $hole);
   drawCards(2, $opponent);
   $dealButton.attr("disabled", "disabled");
@@ -77,7 +78,7 @@ function Player(){
   this.threeOfAKind = false;
   this.twoPair = false;
   this.onePair = false;
-  this.highCard = true;
+  this.highCard;
 }
 
 // get new decks
@@ -99,18 +100,21 @@ function drawCards(card_count, target, callback){
     }
 }
 
-//append cards to page face up for player face down for opponent
+//append cards to page face up for player face down for opponent and adds card code to player.hand
 function appendCards(data, target){
   data.cards.forEach(function(cardData){
     var card = cardData.image==="http://deckofcardsapi.com/static/img/AD.png" ? "../img/aceDiamond.png" : cardData.image;
     if(target===$opponent){
       replace.push(card);
       opponent.hand.push(cardData.code);
-      target.append("<img src="+ back +"></img>");
-    }else{
+      card = back;
+    }else if(target===$hole){
       you.hand.push(cardData.code);
-      target.append("<img src="+ card +"></img>");
+    }else{
+      opponent.hand.push(cardData.code);
+      you.hand.push(cardData.code);
     }
+    target.append("<img src="+ card +"></img>");
   });
 }
 
@@ -129,24 +133,64 @@ function dealCommunity(){
     drawCards(1, $community);
     status = "finished";
     revealOpponent();
+    makeHand(you);
+    makeHand(opponent);
     break;
   }
 }
 
 //reveals opponents face down cards
 function revealOpponent(){
-  $opponent.empty();
+  $('.opponent img').remove();
   replace.forEach(function(card){
     $opponent.append("<img src="+ card +"></img>");
   })
 }
-
 
 //adds bet to page
 function addBetToPage(){
   $(".cash-space").text("$"+cash);
   $(".current-bet-space").text("$"+bet);
 }
+
+//checks for hand combinations
+function makeHand(player){
+  highCard(player);
+}
+
+//checks for high card
+function highCard(player){
+  var max = 0;
+  var suit = "";
+  var value = "";
+  player.hand.forEach(function(card){
+    switch(card[0]){
+    case "0":
+    card = "10" + card.slice(1);
+    break;
+    case "J":
+    card = "11" + card.slice(1);
+    break;
+    case "Q":
+    card = "12" + card.slice(1);
+    break;
+    case "K":
+    card = "13" + card.slice(1);
+    break;
+    case "A":
+    card = "14" + card.slice(1);
+    break;
+  }
+  value = card.slice(0, (card.length-1))
+    if(parseInt(value) > max){
+      max = parseInt(value);
+      suit = card.slice((card.length-1), (card.length));
+    }
+  })
+  player.highCard = max + suit;
+}
+
+
 
 //scott's magic function for this api
 function getJSON(url, cb) {
