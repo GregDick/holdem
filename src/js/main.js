@@ -33,6 +33,11 @@ $newGame.click(function(){
   $dealButton.removeAttr("disabled");
   status = "";
   replace.length = 0;
+  $community.empty();
+  $hole.empty();
+  $opponent.empty();
+  you = new Player();
+  opponent = new Player();
 });
 
 $dealButton.click(function(){
@@ -68,16 +73,16 @@ $check.click(function(){
 
 //player constructor
 function Player(){
-  this.hand = [];
-  this.royalFlush = false;
-  this.straightFlush = false;
-  this.fourOfAKind = false;
-  this.fullHouse = false;
-  this.flush = false;
-  this.straight = false;
-  this.threeOfAKind = false;
-  this.twoPair = false;
-  this.onePair = false;
+  this.hand          = [];
+  this.royalFlush    = { is : false, cards : [] };
+  this.straightFlush = { is : false, cards : [] };
+  this.fourOfAKind   = { is : false, cards : [] };
+  this.fullHouse     = { is : false, cards : [] };
+  this.flush         = { is : false, cards : [] };
+  this.straight      = { is : false, cards : [] };
+  this.threeOfAKind  = { is : false, cards : [] };
+  this.twoPair       = { is : false, cards : [] };
+  this.onePair       = { is : false, cards : [] };
   this.highCard;
 }
 
@@ -183,20 +188,36 @@ function makeHand(player){
   console.log("Hand "+player.hand);
   console.log("High card: "+player.highCard);
   onePair(player);
+  twoPair(player);
 }
 
-//checks for one pair
+function twoPair(player){
+  if(player.onePair.cards.length > 2){
+    player.twoPair.is = true;
+    player.onePair.cards.forEach(function(pair){
+      player.twoPair.cards.push(pair);
+    });
+  }
+}
+
+
+//checks for one pair using a forEach nested inside another forEach
+//sets boolean to true and stores pair values in cards
 function onePair(player){
   var firstValue;
   var firstSuit;
   var secondValue;
+  var used = [];
   player.hand.forEach(function(card, index){
     firstValue = card.slice(0, (card.length-1));
     firstSuit = card.slice((card.length-1), (card.length));
     player.hand.forEach(function(card, place){
       secondValue = card.slice(0, (card.length-1));
-      if(firstValue===secondValue && index!==place){
-        console.log("Pair: " +card+" "+firstValue+firstSuit);
+      if(firstValue===secondValue && place>index && used.indexOf(firstValue) === -1){
+        used.push(firstValue);
+        player.onePair.is = true;
+        player.onePair.cards.push(firstValue+firstSuit, card);
+        console.log("Pair: " +firstValue+firstSuit+" "+card);
       }
     })
   })
